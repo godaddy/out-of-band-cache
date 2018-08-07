@@ -10,12 +10,15 @@ const promisify = require('util').promisify;
 const readdir = promisify(fs.readdir);
 
 describe('File system cache', () => {
-  const cacheDir = path.resolve(__dirname, '../.cache');
+  const cacheDir = path.resolve(__dirname, '.cache');
   let createHashSpy = null;
 
-  beforeEach(done => {
-    createHashSpy = sinon.spy(crypto, 'createHash');
+  before(done => {
     rimraf(cacheDir, done);
+  });
+
+  beforeEach(() => {
+    createHashSpy = sinon.spy(crypto, 'createHash');
   });
 
   afterEach(() => {
