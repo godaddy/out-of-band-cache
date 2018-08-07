@@ -6,7 +6,7 @@
   "scripts": {
     "test": "nyc npm run test:mocha",
     "pretest": "npm run lint",
-    "lint": "eslint-godaddy -c .eslintrc lib/*.js test/*.js example/*.js",
+    "lint": "eslint-godaddy lib/*.js test/*.js example/*.js",
     "test:mocha": "mocha test/*.test.js",
     "test:debug": "mocha --inspect-brk test/*.test.js",
     "example": "rimraf example/.cache && node example/client.js"
