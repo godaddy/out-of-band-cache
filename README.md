@@ -1,9 +1,14 @@
 # `out-of-band-cache`
 
-A generic cache/refreshing module for api clients. `out-of-band-cache` can be useful
-in caching your network requests, which can allow you avoid making needlessly repeated
-network requests to the same endpoint. You can also avoid hitting rate limits by
-limiting your requests to those which are unique.
+[![Version npm](https://img.shields.io/npm/v/out-of-band-cache.svg?style=flat-square)](https://www.npmjs.com/package/out-of-band-cache)
+[![npm Downloads](https://img.shields.io/npm/dm/out-of-band-cache.svg?style=flat-square)](https://npmcharts.com/compare/out-of-band-cache?minimal=true)
+[![Build Status](https://img.shields.io/travis/godaddy/out-of-band-cache/master.svg?style=flat-square)](https://travis-ci.org/godaddy/out-of-band-cache)
+[![Dependencies](https://img.shields.io/david/godaddy/out-of-band-cache.svg?style=flat-square)](https://david-dm.org/godaddy/out-of-band-cache)
+
+A generic cache/refreshing module for api clients. `out-of-band-cache` can be
+useful in caching your network requests, which can allow you avoid making
+needlessly repeated network requests to the same endpoint. You can also avoid
+hitting rate limits by limiting your requests to those which are unique.
 
 ## Installation
 
@@ -63,7 +68,12 @@ async function getter(key) {
 await cache.get('data', {}, getter); // 'Here is your data'
 ```
 
-In this example, `getter` is the definition on what it means to get *fresh* data the first time. `out-of-band-cache` will store this result, either in memory on disk, so that future `get` calls with the same key, in this case `data`, will be immediately returned, rather then performing a potentially expensive or time-consuming operation. This is how you can avoid needlessly hitting the same API url via network request over and over.
+In this example, `getter` is the definition on what it means to get *fresh*
+data the first time. `out-of-band-cache` will store this result, either in
+memory on disk, so that future `get` calls with the same key, in this case
+`data`, will be immediately returned, rather then performing a potentially
+expensive or time-consuming operation. This is how you can avoid needlessly
+hitting the same API url via network request over and over.
 
 If you get something that you would want to keep around for a while you can pass a different `maxAge`:
 
@@ -80,8 +90,8 @@ await cache.get('data', { skipCache: true }, getter);
 ## Refreshing the Cache
 
 If you want to wipe out the existing cache, you can simply use `cache.reset`.
-This will remove all items from all of the caches associated with your `client`,
-so *both* the in-memory and file-system caches will be wiped.
+This will remove all items from all of the caches associated with your
+`client`, so *both* the in-memory and file-system caches will be wiped.
 
 ```js
 // fetch fresh data
@@ -99,9 +109,10 @@ await cache.get('data', {}, getter);
 
 ## Usage in an API client
 
-The [example provided](example/client.js) outlines a barebones API client
-that takes advantage of `out-of-band-cache`. You can run the example by cloning
-this repo and running `npm run example`. The script should take about 4 seconds to run:
+The [example provided](example/client.js) outlines a barebones API client that
+takes advantage of `out-of-band-cache`. You can run the example by cloning
+this repo and running `npm run example`. The script should take about 4
+seconds to run:
 
 ```sh
 $ npm run example
