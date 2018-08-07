@@ -1,0 +1,40 @@
+{
+  "name": "out-of-band-cache",
+  "version": "0.0.0",
+  "description": "generic cache and refreshing for api clients",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "nyc npm run test:mocha",
+    "pretest": "npm run lint",
+    "lint": "eslint-godaddy -c .eslintrc lib/*.js test/*.js example/*.js",
+    "test:mocha": "mocha test/*.test.js",
+    "test:debug": "mocha --inspect-brk test/*.test.js",
+    "example": "rimraf example/.cache && node example/client.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/godaddy/out-of-band-cache"
+  },
+  "keywords": [
+    "out-of-band",
+    "cache",
+    "api",
+    "lru-cache",
+    "async-cache"
+  ],
+  "author": "GoDaddy.com Operating Company LLC",
+  "license": "MIT",
+  "devDependencies": {
+    "assume": "^2.1.0",
+    "eslint": "^5.2.0",
+    "eslint-config-godaddy": "^2.1.0",
+    "eslint-plugin-json": "^1.2.1",
+    "eslint-plugin-mocha": "^5.1.0",
+    "mocha": "^5.2.0",
+    "nyc": "^12.0.2",
+    "sinon": "^6.1.4"
+  },
+  "dependencies": {
+    "rimraf": "^2.6.2"
+  }
+}
