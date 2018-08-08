@@ -2,7 +2,7 @@
 
 [![Version npm](https://img.shields.io/npm/v/out-of-band-cache.svg?style=flat-square)](https://www.npmjs.com/package/out-of-band-cache)
 [![npm Downloads](https://img.shields.io/npm/dm/out-of-band-cache.svg?style=flat-square)](https://npmcharts.com/compare/out-of-band-cache?minimal=true)
-[![Build Status](https://img.shields.io/travis/godaddy/out-of-band-cache/master.svg?style=flat-square)](https://travis-ci.org/godaddy/out-of-band-cache)
+[![Build Status](https://travis-ci.com/godaddy/out-of-band-cache.svg?branch=master)](https://travis-ci.com/godaddy/out-of-band-cache)
 [![Dependencies](https://img.shields.io/david/godaddy/out-of-band-cache.svg?style=flat-square)](https://david-dm.org/godaddy/out-of-band-cache)
 
 A generic cache/refreshing module for api clients. `out-of-band-cache` can be
