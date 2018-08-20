@@ -23,6 +23,7 @@ You can instantiate the cache with 3 configurable options: `maxAge`, `maxStalene
 - `maxAge`: The duration, in milliseconds, before a cached item expires
 - `maxStaleness`: The duration, in milliseconds, in which expired cache items are still served
 - `fsCachePath`: (Optional) file path to create a file-system based cache
+- `shouldCache`: (Optional) a function to determine whether or not you will cache a found item
 
 ## Instantiation
 
@@ -81,10 +82,22 @@ If you get something that you would want to keep around for a while you can pass
 await cache.get('data', { maxAge: 120 * 60 * 1000 }, getter);
 ```
 
-Or you could elect to skip the cache entirely, going directly to `getter` for your data:
+## Ignoring the cache
+
+In some cases, you may want to modify how your `cache` remembers data.
+You can do this in two ways. The first is to skip the cache entirely, going
+directly to `getter` for your data. This can be done via the `skipCache` option:
 
 ```js
 await cache.get('data', { skipCache: true }, getter);
+```
+
+The other method is conditionally choose not to remember certain items based on
+their value. This can be done via the `shouldCache` option. For example, here we
+are only remembering values that only `=== 'data'`;
+
+```js
+await cache.get('data', { shouldCache: value => value === 'data' }, getter);
 ```
 
 ## Refreshing the Cache
