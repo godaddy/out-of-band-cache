@@ -107,10 +107,20 @@ describe('Out of Band cache', () => {
 
     it('does not add an item if we supply shouldCache as a get option', async function () {
       const dopey = new Cache({});
-      
+
       await dopey.get('diamond', { shouldCache: () => false }, simpleGet);
       assume(dopey._caches[0]._items).has.length(0);
     });
+
+    it('does not add an item if it fails shouldCache', async function () {
+      const dopey = new Cache({ shouldCache: v => v !== 'words' });
+      // dopey doesn't know how to speak so he doesn't remember any words
+
+      await dopey.get('sounds', {}, simpleGet);
+      await dopey.get('words', {}, simpleGet);
+      await dopey.get('diamonds', {}, simpleGet);
+      assume(dopey._caches[0]._items).has.length(2);
+    })
   });
 
   describe('_refresh', function () {
