@@ -7,6 +7,7 @@ const sinon = require('sinon');
 function sleep(ms) {
   return new Promise(res => setTimeout(res, ms));
 }
+const simpleGet = async i => i;
 
 describe('Out of Band cache', () => {
   const cachePath = path.resolve(__dirname, '../.cache');
@@ -66,11 +67,10 @@ describe('Out of Band cache', () => {
   describe('get', function () {
     it('never uses the cache if we specifically want to skip it', async function () {
       const skipper = new Cache({});
-      const getter = async i => i;
 
-      const first = await skipper.get('data', {}, getter);
-      const second = await skipper.get('data', { skipCache: true }, getter);
-      const third = await skipper.get('data', {}, getter);
+      const first = await skipper.get('data', {}, simpleGet);
+      const second = await skipper.get('data', { skipCache: true }, simpleGet);
+      const third = await skipper.get('data', {}, simpleGet);
 
       assume(first.fromCache).is.falsey();
       assume(second.fromCache).is.falsey();
@@ -90,13 +90,26 @@ describe('Out of Band cache', () => {
 
     it('refreshes on an expired item', async function () {
       const fridge = new Cache({ maxAge: -10, maxStaleness: -10 }); // items are immediately stale
-      const getter = async i => i;
 
-      await fridge.get('old milk', {}, getter);
+      await fridge.get('old milk', {}, simpleGet);
       await sleep(100);
-      const expired = await fridge.get('old milk', { maxAge: 10, maxStaleness: 10 }, getter);
+      const expired = await fridge.get('old milk', { maxAge: 10, maxStaleness: 10 }, simpleGet);
 
       assume(expired.fromCache).is.falsey();
+    });
+
+    it('does not add an item to the cache if preconfigured not to', async function () {
+      const dopey = new Cache({ shouldCache: () => false });
+
+      await dopey.get('diamond', {}, simpleGet);
+      assume(dopey._caches[0]._items).has.length(0);
+    });
+
+    it('does not add an item if we supply shouldCache as a get option', async function () {
+      const dopey = new Cache({});
+      
+      await dopey.get('diamond', { shouldCache: () => false }, simpleGet);
+      assume(dopey._caches[0]._items).has.length(0);
     });
   });
 
