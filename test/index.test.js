@@ -120,7 +120,27 @@ describe('Out of Band cache', () => {
       await dopey.get('words', {}, simpleGet);
       await dopey.get('diamonds', {}, simpleGet);
       assume(dopey._caches[0]._items).has.length(2);
-    })
+    });
+
+    it('only sets the cache values with shouldCache is a function', async function () {
+      const wonderland = new Cache({});
+
+      // default
+      await wonderland.get('tweedle-dee', {}, simpleGet);
+      assume(wonderland._caches[0]._items).has.length(1);
+
+      // boolean
+      await wonderland.get('tweedle-dum', { shouldCache: true }, simpleGet);
+      assume(wonderland._caches[0]._items).has.length(1);
+
+      // string
+      await wonderland.get('bandersnatch', { shouldCache: 'totally a function' }, simpleGet);
+      assume(wonderland._caches[0]._items).has.length(1);
+
+      // function
+      await wonderland.get('jabberwocky', { shouldCache: () => true }, simpleGet);
+      assume(wonderland._caches[0]._items).has.length(2);
+    });
   });
 
   describe('_refresh', function () {
