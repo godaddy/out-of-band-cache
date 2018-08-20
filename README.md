@@ -93,8 +93,8 @@ await cache.get('data', { skipCache: true }, getter);
 ```
 
 The other method is conditionally choose not to remember certain items based on
-their value. This can be done via the `shouldCache` option. For example, here we
-are only remembering values that only `=== 'data'`;
+their value. This can be done via the `shouldCache` option. For example: here we
+are only remembering values that `=== 'data'`.
 
 ```js
 await cache.get('data', { shouldCache: value => value === 'data' }, getter);
