@@ -134,7 +134,7 @@ describe('Out of Band cache', () => {
       try {
         await wonderland.get('tweedle-dum', { shouldCache: true }, simpleGet);
       } catch (e) {
-        assume(e).matches(/willCache has to be a function/);
+        assume(e).matches(/shouldCache has to be a function/);
         errors++;
       }
 
@@ -145,7 +145,7 @@ describe('Out of Band cache', () => {
       try {
         await wonderland.get('bandersnatch', { shouldCache: 'totally a function' }, simpleGet);
       } catch (e) {
-        assume(e).matches(/willCache has to be a function/);
+        assume(e).matches(/shouldCache has to be a function/);
         errors++;
       }
 
