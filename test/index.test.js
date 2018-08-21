@@ -124,17 +124,32 @@ describe('Out of Band cache', () => {
 
     it('only sets the cache values with shouldCache is a function', async function () {
       const wonderland = new Cache({});
+      let errors = 0;
 
       // default
       await wonderland.get('tweedle-dee', {}, simpleGet);
       assume(wonderland._caches[0]._items).has.length(1);
 
       // boolean
-      await wonderland.get('tweedle-dum', { shouldCache: true }, simpleGet);
+      try {
+        await wonderland.get('tweedle-dum', { shouldCache: true }, simpleGet);
+      } catch (e) {
+        assume(e).matches(/willCache has to be a function/);
+        errors++;
+      }
+
+      assume(errors).equals(1);
       assume(wonderland._caches[0]._items).has.length(1);
 
       // string
-      await wonderland.get('bandersnatch', { shouldCache: 'totally a function' }, simpleGet);
+      try {
+        await wonderland.get('bandersnatch', { shouldCache: 'totally a function' }, simpleGet);
+      } catch (e) {
+        assume(e).matches(/willCache has to be a function/);
+        errors++;
+      }
+
+      assume(errors).equals(2);
       assume(wonderland._caches[0]._items).has.length(1);
 
       // function
