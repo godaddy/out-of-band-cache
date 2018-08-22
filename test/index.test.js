@@ -156,6 +156,17 @@ describe('Out of Band cache', () => {
       await wonderland.get('jabberwocky', { shouldCache: () => true }, simpleGet);
       assume(wonderland._caches[0]._items).has.length(2);
     });
+
+    it('does not set a cache item, even if we do it first', async function () {
+      const eventually = new Cache({});
+
+      await eventually.get('not yet', { skipCache: () => false }, simpleGet);
+      assume(eventually._caches[0]._items).has.length(0);
+
+      await eventually.get('not yet', {}, simpleGet);
+      await eventually.get('now', {}, simpleGet);
+      assume(eventually._caches[0]._items).has.length(2);
+    });
   });
 
   describe('_refresh', function () {
