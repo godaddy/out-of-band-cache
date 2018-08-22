@@ -1,5 +1,7 @@
 # Change Log
 
+### 1.1.0
+
 - [#2] Conditionally ignore cache
 
 ### 1.0.1
