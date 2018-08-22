@@ -8,6 +8,14 @@ describe('In-memory cache', function () {
     assume(cache._items.abc).equals(123);
   });
 
+  it('recreates the _items if they were manually deleted', async function () {
+    const cache = new Cache();
+    delete cache._items;
+    assume(cache._items).does.not.exist();
+    cache.init();
+    assume(cache._items).exists();
+  });
+
   it('generates an empty item on initialization', async function () {
     const cache = new Cache();
     assume(cache._items).exists();

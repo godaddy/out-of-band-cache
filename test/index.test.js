@@ -217,4 +217,15 @@ describe('Out of Band cache', () => {
       assume(Object.entries(cache._pendingRefreshes)).has.length(0);
     });
   });
+
+  describe('reset', function () {
+    it('restores every cache', async function () {
+      const resetti = new Cache({});
+      await resetti.get('save file', {}, simpleGet);
+      await resetti.get('unsaved file', {}, simpleGet);
+      assume(resetti._caches[0]._items).has.length(2);
+      await resetti.reset();
+      assume(resetti._caches[0]._items).has.length(0);
+    });
+  });
 });
