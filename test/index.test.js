@@ -123,7 +123,7 @@ describe('Out of Band cache', () => {
     });
 
     it('only sets the cache values with shouldCache is a function', async function () {
-      const wonderland = new Cache({});
+      let wonderland = new Cache({});
       let errors = 0;
 
       // default
@@ -155,6 +155,16 @@ describe('Out of Band cache', () => {
       // function
       await wonderland.get('jabberwocky', { shouldCache: () => true }, simpleGet);
       assume(wonderland._caches[0]._items).has.length(2);
+
+      // in the constructor
+      try {
+        wonderland = new Cache({ shouldCache: 'definitely a function' });
+      } catch (e) {
+        assume(e).matches(/shouldCache has to be a function/);
+        errors++;
+      }
+
+      assume(errors).equals(3);
     });
 
     it('does not set a cache item, even if we do it first', async function () {
