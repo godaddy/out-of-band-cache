@@ -86,7 +86,8 @@ await cache.get('data', { maxAge: 120 * 60 * 1000 }, getter);
 
 In some cases, you may want to modify how your `cache` remembers data.
 You can do this in two ways. The first is to skip the cache entirely, going
-directly to `getter` for your data. This can be done via the `skipCache` option:
+directly to `getter` for your data. This can be done via the `skipCache` option.
+It is importatant to note that this condition is evaluated **before** the `getter`.
 
 ```js
 await cache.get('data', { skipCache: true }, getter);
@@ -94,7 +95,8 @@ await cache.get('data', { skipCache: true }, getter);
 
 The other method is conditionally choose not to remember certain items based on
 their value. This can be done via the `shouldCache` option. For example: here we
-are only remembering values that `=== 'data'`.
+are only remembering values that `=== 'data'`. It is important to note that this
+condition is evaluated **after** the `getter`.
 
 ```js
 await cache.get('data', { shouldCache: value => value === 'data' }, getter);
