@@ -1,5 +1,6 @@
 const assume = require('assume');
 const Cache = require('../lib/memory');
+const cacheTest = require('./cache');
 
 describe('In-memory cache', function () {
   it('allows the cache to be pre-instantiated', function () {
@@ -56,5 +57,13 @@ describe('In-memory cache', function () {
     await cache.set('abc', 123);
     await cache.reset();
     assume(cache._items).has.length(0);
+  });
+
+  describe('API-level functionality', function () {
+    const opts = {
+      constructor: Cache
+    };
+
+    cacheTest(opts)();
   });
 });
