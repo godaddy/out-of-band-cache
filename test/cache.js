@@ -1,4 +1,5 @@
 const assume = require('assume');
+const { it } = require('mocha');
 
 const defaults = {
   beforeEach: () => {},
@@ -68,7 +69,6 @@ module.exports = function testInstance(options) {
       }
 
       assume(caught).is.truthy();
-
     });
   };
 };

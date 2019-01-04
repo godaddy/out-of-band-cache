@@ -177,3 +177,53 @@ Fetched {"value":{"code":123465,"planet":"Druidia"},"fromCache":true} in 0ms
 Fetched {"value":{"code":123465,"planet":"Druidia"},"fromCache":true} in 0ms
 Fetched {"value":{"code":123465,"planet":"Druidia"},"fromCache":false} in 2001ms
 ```
+
+## Writing your own cache
+
+Let's say you want to add functionality to persist your cache in places other
+than just in memory and on disk. You can provide the `caches` option to provide
+additional persistence methods to your cache.
+
+```js
+const Cache = require('out-of-band-cache');
+const otherCache = require('./path/to/my/my-custom-cache');
+
+const caches = [ new otherCache(optionsToContructIt) ];
+
+const cache = new Cache({
+  maxAge: 10 * 60 * 1000,
+  maxStaleness: 60 * 60 * 1000,
+  caches
+});
+```
+
+Your new `otherCache` will then be used *after* the caches built in. In te above
+case it will be used as a fallback for the `memory` cache.
+
+If you want to ensure that your cache works properly, we have included a `mocha`
+suite that you can run directly on your cache:
+
+```js
+const cacheTest = require('out-of-band-cache/test/cache');
+const otherCache = require('./path/to/my/my-custom-cache');
+
+describe('MyCustomCache', function () {
+  it('is correctly consumed by out-of-band-cache', function () {
+    const options = {
+      beforeEach: function () {
+        // any setup that needs to be done before a test
+      },
+      afterEach: function () {
+        // any teardown that needs to be done after a test
+      },
+      constructor: otherCache,
+      builder: {
+        // any options that are needed to construct an otherCache
+      }
+    }
+
+    // run the mocha suite
+    cacheTest(options)();
+  });
+})
+```
