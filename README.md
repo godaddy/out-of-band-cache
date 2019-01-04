@@ -198,10 +198,51 @@ const cache = new Cache({
 ```
 
 Your new `otherCache` will then be used *after* the caches built in. In te above
-case it will be used as a fallback for the `memory` cache.
+case it will be used as a fallback for the `memory` cache. Your new cache must,
+at a minimum match the following spec to integrate properly with `out-of-band-cache`:
 
-If you want to ensure that your cache works properly, we have included a `mocha`
-suite that you can run directly on your cache:
+```js
+class MyCustomCache {
+  /**
+   * Initializes the cache. This may need to set up connections, create files, or
+   * something else that is needed before any other operations occur.
+   *
+   * @returns {Promise<void>} a Promise which resolves when initialization has completed.
+   */
+  async init() { }
+
+  /**
+   * Tries to retrieve a cache item from the existing cache
+   *
+   * @param {String} key - The cache key
+   * @returns {Promise<JSONSerializable>} a Promise which resolves if an item was found
+   * @throws {Error} an error that is thrown is the item cannot be found
+   */
+  async get(key) { }
+
+  /**
+   * Stores a cache item
+   *
+   * @param {String} key - The cache key
+   * @param {JSONSerializable} value  - The JSON-serializable value to store
+   * @returns {Promise<void>} a Promise which resolves once storage completes,
+   * or fails if there is an error writing the file.
+   */
+  async set(key, value) { }
+
+  /**
+   * Clears the cache entirely
+   *
+   * @returns {Promise<void>} a Promise which resolves once all cache files are
+   * deleted or fails if there was an error.
+   */
+  async reset() { }
+}
+```
+
+If you want to ensure that your cache works properly, we have included a test
+suite that you can run directly on your cache. **NB**, you will need to have
+`mocha` and `assume` already installed to use this test.
 
 ```js
 const cacheTest = require('out-of-band-cache/test/cache');
@@ -218,7 +259,8 @@ describe('MyCustomCache', function () {
       },
       constructor: otherCache,
       builder: {
-        // any options that are needed to construct an otherCache
+        // any options that are needed to construct an otherCache via
+        // new contructor(builder)
       }
     }
 
