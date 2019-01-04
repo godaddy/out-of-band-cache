@@ -1,19 +1,23 @@
-const path = require('path');
-const rimraf = require('rimraf');
 const assume = require('assume');
-const MemoryCache = require('../lib/memory');
-const FSCache = require('../lib/fs');
 
-const cacheDir = path.resolve(__dirname, '../.cache');
-function testInstance(constructor, opts) {
-  let cache;
+const defaults = {
+  beforeEach: () => {},
+  afterEach: () => {},
+  constructor: class dummy {},
+  builder: {}
+};
+
+module.exports = function testInstance(options) {
+  const opts = {
+    ...defaults,
+    ...options
+  };
+
+  const cache = new opts.constructor(opts.builder);
 
   return function () {
-    beforeEach(function (done) {
-      cache = new constructor(opts);
-
-      rimraf(cacheDir, done);
-    });
+    beforeEach(opts.beforeEach);
+    afterEach(opts.afterEach);
 
     it('init without any errors', async function () {
       await cache.init();
@@ -67,9 +71,4 @@ function testInstance(constructor, opts) {
 
     });
   };
-}
-
-describe('API-level functionality', function () {
-  describe('File System cache', testInstance(MemoryCache, {}));
-  describe('In-memory cache', testInstance(FSCache, { path: cacheDir }));
-});
+};

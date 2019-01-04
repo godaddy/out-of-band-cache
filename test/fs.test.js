@@ -4,10 +4,13 @@ const rimraf = require('rimraf');
 const assume = require('assume');
 const sinon = require('sinon');
 const crypto = require('crypto');
-const FSCache = require('../lib/fs');
 const promisify = require('util').promisify;
 
+const FSCache = require('../lib/fs');
+const cacheTest = require('./cache');
+
 const readdir = promisify(fs.readdir);
+
 
 describe('File system cache', () => {
   const cacheDir = path.resolve(__dirname, '.cache');
@@ -66,5 +69,17 @@ describe('File system cache', () => {
 
     assume(caught).is.truthy();
     assume(cache._hashCache).has.length(0);
+  });
+
+  describe('API-level functionality', function () {
+    const opts = {
+      beforeEach: function (done) {
+        rimraf(cacheDir, done);
+      },
+      constructor: FSCache,
+      builder: { path: cacheDir }
+    };
+
+    cacheTest(opts)();
   });
 });
