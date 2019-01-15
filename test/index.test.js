@@ -17,6 +17,11 @@ describe('Out of Band cache', () => {
     rimraf(cachePath, done);
   });
 
+  it('exposes the memory and fs caches on the top level export', function () {
+    assume(Cache.Memory).exists();
+    assume(Cache.File).exists();
+  });
+
   it('does not prevent a failed request from being retried later on', async function () {
     const cache = new Cache({
       maxAge: 60 * 60 * 1000,
