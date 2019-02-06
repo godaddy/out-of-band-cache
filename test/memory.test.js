@@ -3,7 +3,7 @@ const Cache = require('../lib/memory');
 
 describe('In-memory cache', function () {
   it('allows the cache to be pre-instantiated', function () {
-    const cache = new Cache({ items: { abc: 123 }});
+    const cache = new Cache({ items: { abc: 123 } });
     assume(cache._items.abc).exists();
     assume(cache._items.abc).equals(123);
   });
