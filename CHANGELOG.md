@@ -18,3 +18,4 @@
 [#1]: https://github.com/godaddy/out-of-band-cache/pull/1
 [#2]: https://github.com/godaddy/out-of-band-cache/pull/2
 [#4]: https://github.com/godaddy/out-of-band-cache/pull/4
+[#5]: https://github.com/godaddy/out-of-band-cache/pull/5
