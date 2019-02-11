@@ -92,7 +92,7 @@ describe('Out of Band cache', () => {
     it('can override the cache-level maxAge', async function () {
       const fridge = new Cache({ maxAge: -10, maxStaleness: -10 }); // items are immediately stale
       await fridge.get('good milk', { maxAge: 1000 }, async () => 'milk');
-      const milk = await fridge.get('good milk', { }, async () => { throw new new Error('gross'); });
+      const milk = await fridge.get('good milk', { }, async () => { throw new Error('gross'); });
       assume(milk.fromCache).is.truthy();
     });
 
@@ -111,7 +111,7 @@ describe('Out of Band cache', () => {
 
       await fridge.get('old milk', {}, async () => 'milk');
       await sleep(100);
-      const expired = await fridge.get('old milk', { }, async () => { throw new new Error('gross'); });
+      const expired = await fridge.get('old milk', { }, async () => { throw new Error('gross'); });
 
       assume(expired.fromCache).is.truthy();
       assume(expired.value).to.equal('milk');
@@ -122,7 +122,7 @@ describe('Out of Band cache', () => {
 
       await fridge.get('old milk', {}, async () => 'milk');
       await sleep(100);
-      const expired = await fridge.get('old milk', { maxStaleness: 1000 }, async () => { throw new new Error('gross'); });
+      const expired = await fridge.get('old milk', { maxStaleness: 1000 }, async () => { throw new Error('gross'); });
 
       assume(expired.fromCache).is.truthy();
       assume(expired.value).to.equal('milk');
