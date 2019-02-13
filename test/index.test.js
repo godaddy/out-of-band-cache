@@ -1,3 +1,4 @@
+/* eslint max-statements: 0 */
 const path = require('path');
 const assume = require('assume');
 const Cache = require('../lib/');
@@ -88,14 +89,43 @@ describe('Out of Band cache', () => {
       assume(calledRefresh).is.truthy();
     });
 
+    it('can override the cache-level maxAge', async function () {
+      const fridge = new Cache({ maxAge: -10, maxStaleness: -10 }); // items are immediately stale
+      await fridge.get('good milk', { maxAge: 1000 }, async () => 'milk');
+      const milk = await fridge.get('good milk', { }, async () => { throw new Error('gross'); });
+      assume(milk.fromCache).is.truthy();
+    });
+
     it('refreshes on an expired item', async function () {
       const fridge = new Cache({ maxAge: -10, maxStaleness: -10 }); // items are immediately stale
 
       await fridge.get('old milk', {}, simpleGet);
       await sleep(100);
-      const expired = await fridge.get('old milk', { maxAge: 10, maxStaleness: 10 }, simpleGet);
+      const expired = await fridge.get('old milk', { }, simpleGet);
 
       assume(expired.fromCache).is.falsey();
+    });
+
+    it('refreshes on an expired item, but returns stale if within staleness', async function () {
+      const fridge = new Cache({ maxAge: -10, maxStaleness: 1000 }); // items are immediately stale
+
+      await fridge.get('old milk', {}, async () => 'milk');
+      await sleep(100);
+      const expired = await fridge.get('old milk', { }, async () => { throw new Error('gross'); });
+
+      assume(expired.fromCache).is.truthy();
+      assume(expired.value).to.equal('milk');
+    });
+
+    it('can override the cache-level maxStaleness', async function () {
+      const fridge = new Cache({ maxAge: -10, maxStaleness: -10 }); // items are immediately stale
+
+      await fridge.get('old milk', {}, async () => 'milk');
+      await sleep(100);
+      const expired = await fridge.get('old milk', { maxStaleness: 1000 }, async () => { throw new Error('gross'); });
+
+      assume(expired.fromCache).is.truthy();
+      assume(expired.value).to.equal('milk');
     });
 
     it('does not add an item to the cache if preconfigured not to', async function () {
@@ -185,7 +215,7 @@ describe('Out of Band cache', () => {
       cache._pendingRefreshes.nuclearLaunchCodes = 12345;
       const stub = sinon.stub();
 
-      const value = await cache._refresh('nuclearLaunchCodes', null, stub);
+      const value = await cache._refresh('nuclearLaunchCodes', null, stub, {});
       assume(JSON.stringify(value)).equals(JSON.stringify({ value: 12345, fromCache: false }));
       assume(stub.called).is.falsey();
     });
@@ -198,7 +228,7 @@ describe('Out of Band cache', () => {
 
       let caught;
       try {
-        await cache._refresh('data', null, badGetter);
+        await cache._refresh('data', null, badGetter, {});
       } catch (err) {
         caught = true;
         assume(err).matches('that was no bueno');
@@ -218,7 +248,7 @@ describe('Out of Band cache', () => {
 
       const tasks = Array(10).fill(0).map((_, i) => {
         // no await because we want to proceed before they resolve
-        return cache._refresh(i, null, slowGetter);
+        return cache._refresh(i, null, slowGetter, {});
       });
 
       assume(Object.entries(cache._pendingRefreshes)).has.length(10);
