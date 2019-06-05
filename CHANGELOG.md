@@ -1,5 +1,7 @@
 # Change Log
 
+### 1.1.1
+
 - [#5] Allow for call-level age overrides as specified in the README.
 - [#4] Bump various dev-dependencies
 
