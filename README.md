@@ -18,12 +18,15 @@ npm install --save out-of-band-cache
 
 # Usage
 
-You can instantiate the cache with 3 configurable options: `maxAge`, `maxStaleness`, and `fsCachePath`.
+You can instantiate the cache with 3 configurable options: `maxAge`,
+`maxStaleness`, and `fsCachePath`.
 
 - `maxAge`: The duration, in milliseconds, before a cached item expires
-- `maxStaleness`: The duration, in milliseconds, in which expired cache items are still served
+- `maxStaleness`: The duration, in milliseconds, in which expired cache
+items are still served
 - `fsCachePath`: (Optional) file path to create a file-system based cache
-- `shouldCache`: (Optional) a function to determine whether or not you will cache a found item
+- `shouldCache`: (Optional) a function to determine whether or not you will
+cache a found item
 
 ## Instantiation
 
@@ -55,9 +58,19 @@ const cache = new Cache({
 This is driven through `cache.get` and takes 3 parameters:
 
 - `key`: The cache key
-- `opts`: Options for this particular read. You can override `maxAge` or potentially skip the cache entirely
-- `getter`: an `async` function that defines how to fetch the data for the given `key`.
+- `opts`: Options for this particular read. You can override `maxAge` or
+potentially skip the cache entirely
+- `getter`: an `async` function that defines how to fetch the data for
+the given `key`.
   - The data returned is assumed to be valid when passed to `JSON.stringify`.
+
+The results will be returned to you wrapped in an object with 2 properties:
+
+- `value`: The result for the given `key` (i.e. the value that was cached
+or retrieved from your `getter`)
+- `fromCache`: A boolean that indicates whether the value was retrieved from
+the cache or `false` if the `getter` was used. This can be useful when
+debugging to know where the values you are using came from.
 
 Very basic usage can be as follows:
 
@@ -66,7 +79,8 @@ async function getter(key) {
   return 'Here is your ' + key;
 }
 
-await cache.get('data', {}, getter); // 'Here is your data'
+await cache.get('data', {}, getter); // { value: 'Here is your data', fromCache: false }
+await cache.get('data', {}, getter); // { value: 'Here is your data', fromCache: true }
 ```
 
 In this example, `getter` is the definition on what it means to get *fresh*
@@ -76,7 +90,8 @@ memory on disk, so that future `get` calls with the same key, in this case
 expensive or time-consuming operation. This is how you can avoid needlessly
 hitting the same API url via network request over and over.
 
-If you get something that you would want to keep around for a while you can pass a different `maxAge`:
+If you get something that you would want to keep around for a while you can
+pass a different `maxAge`:
 
 ```js
 await cache.get('data', { maxAge: 120 * 60 * 1000 }, getter);
@@ -87,7 +102,7 @@ await cache.get('data', { maxAge: 120 * 60 * 1000 }, getter);
 In some cases, you may want to modify how your `cache` remembers data.
 You can do this in two ways. The first is to skip the cache entirely, going
 directly to `getter` for your data. This can be done via the `skipCache` option.
-It is importatant to note that this condition is evaluated **before** the `getter`.
+It is important to note that this condition is evaluated **before** the `getter`.
 
 ```js
 await cache.get('data', { skipCache: true }, getter);
@@ -100,6 +115,31 @@ condition is evaluated **after** the `getter`.
 
 ```js
 await cache.get('data', { shouldCache: value => value === 'data' }, getter);
+```
+
+## Complex Getters
+
+The `getter` function that you pass to `get` is used to retrieve fresh data
+for the cache. When it is invoked, it will be sent both the `key` that needs
+to be refreshed, but also the previous value of that key in the cache. This
+can be useful when you know that values for particular keys never change and
+are expensive to calculate.
+
+```js
+async function reusingGetter(key, previousValue) {
+  // If the key never changes and we already have a value, return it.
+  if (key === 'this-thing' && previousValue) return previousValue;
+
+  // Do some expensive operation
+
+  return `${key} is expensive to calculate`;
+}
+
+await cache.get('this-thing', {}, reusingGetter);
+// -> { value: 'this-thing is expensive to calculate', fromCache: false }
+
+await cache.get('this-thing', { maxAge: -1, maxStaleness: -1 }, reusingGetter);
+// -> { value: 'this-thing is expensive to calculate', fromCache: false }
 ```
 
 ## Refreshing the Cache
