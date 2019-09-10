@@ -1,5 +1,7 @@
 # Change Log
 
+- Allow consumers to use drivers for their own caches.
+
 ### 1.1.1
 
 - [#5] Allow for call-level age overrides as specified in the README.
