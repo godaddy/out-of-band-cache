@@ -3,12 +3,14 @@
   "version": "1.1.1",
   "description": "generic cache and refreshing for api clients",
   "main": "lib/index.js",
+  "types": "typings/index.d.ts",
   "scripts": {
-    "test": "nyc npm run test:mocha",
+    "test": "nyc npm run test:mocha && npm run test:types",
     "posttest": "npm run lint",
     "lint": "eslint-godaddy lib/*.js test/*.js example/*.js",
     "test:mocha": "mocha test/*.test.js",
     "test:debug": "mocha --inspect-brk test/*.test.js",
+    "test:types": "tsc --esModuleInterop --noEmit ./typings/*.ts",
     "example": "rimraf example/.cache && node example/client.js"
   },
   "repository": {
@@ -25,6 +27,7 @@
   "author": "GoDaddy.com Operating Company LLC",
   "license": "MIT",
   "devDependencies": {
+    "@types/node": "^12.7.4",
     "assume": "^2.1.0",
     "eslint": "^5.13.0",
     "eslint-config-godaddy": "^3.0.0",
@@ -32,7 +35,8 @@
     "eslint-plugin-mocha": "^5.2.1",
     "mocha": "^5.2.0",
     "nyc": "^14.1.1",
-    "sinon": "^7.2.3"
+    "sinon": "^7.2.3",
+    "typescript": "^3.6.2"
   },
   "dependencies": {
     "diagnostics": "^1.1.1",
