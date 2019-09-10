@@ -1,5 +1,7 @@
 # Change Log
 
+### 1.2.0
+
 - Allow consumers to use drivers for their own caches.
 
 ### 1.1.1
