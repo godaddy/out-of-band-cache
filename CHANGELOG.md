@@ -1,5 +1,7 @@
 # Change Log
 
+- Perform `npm outdated` to keep all dependencies up to date
+
 ### 1.2.0
 
 - Allow consumers to use drivers for their own caches.
