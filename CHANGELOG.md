@@ -1,5 +1,7 @@
 # Change Log
 
+### 1.2.1
+
 - Perform `npm outdated` to keep all dependencies up to date
 
 ### 1.2.0
