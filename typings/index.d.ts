@@ -1,12 +1,22 @@
 declare module 'out-of-band-cache' {
-  type JSONSerializable = Object | string | number | boolean | Date;
+  type MaybeAsync<T> = T | Promise<T>;
 
-  type GetResult = (value: JSONSerializable) => boolean;
+  type BaseSerializable = null | string | number | boolean;
+
+  type JSONSerializable =
+    | BaseSerializable
+    | { [key: string]: BaseSerializable }
+    | Array<BaseSerializable>;
+
+  interface GetResult {
+    value: JSONSerializable;
+    fromCache: boolean;
+  }
 
   interface SharedCacheProps {
     maxAge?: number;
     maxStaleness?: number;
-    shouldCache?: (getResultFn: GetResult) => boolean;
+    shouldCache?: (resultObj: GetResult) => boolean;
   }
 
   type UpdateFn = (
@@ -15,10 +25,10 @@ declare module 'out-of-band-cache' {
   ) => Promise<JSONSerializable>;
 
   interface CacheType {
-    init: (...args: any) => Promise<any>;
-    get: (...args: any) => Promise<any>;
-    set: (...args: any) => Promise<any>;
-    reset: (...args: any) => Promise<any>;
+    init: () => MaybeAsync<void>;
+    get: (key: string) => MaybeAsync<JSONSerializable>;
+    set: (key: string, value: JSONSerializable) => MaybeAsync<void>;
+    reset: () => MaybeAsync<void>;
   }
 
   interface MultiLevelCacheProps extends SharedCacheProps {
