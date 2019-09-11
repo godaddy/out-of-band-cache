@@ -177,3 +177,120 @@ Fetched {"value":{"code":123465,"planet":"Druidia"},"fromCache":true} in 0ms
 Fetched {"value":{"code":123465,"planet":"Druidia"},"fromCache":true} in 0ms
 Fetched {"value":{"code":123465,"planet":"Druidia"},"fromCache":false} in 2001ms
 ```
+
+## Writing your own cache
+
+Let's say you want to add functionality to persist your cache in places other
+than just in memory and on disk. You can provide the `fallback` option to
+provide additional persistence methods to your cache.
+
+```js
+const Cache = require('out-of-band-cache');
+const OtherCache = require('./path/to/my/my-custom-cache');
+
+const fallback = [ new OtherCache(optionsToContructIt) ];
+
+const cache = new Cache({
+  maxAge: 10 * 60 * 1000,
+  maxStaleness: 60 * 60 * 1000,
+  fallback
+});
+```
+
+Your new `OtherCache` will then be used *after* the built-in caches. In the
+above case a fallback for the `memory` cache: any key not found in the `memory`
+cache will then be looked up in `OtherCache`.
+
+If you instead want to entirely replace the built-in array caches, you provide
+a `caches` array to override it. In this example, we replicate the default
+implementation by overriding with a `Memory` and `File` cache
+
+```js
+const path = require('path');
+const { Memory, File } = require('out-of-band-cache');
+
+const caches = [
+  new Memory(),
+  new File({
+    path: path.join(__dirname, '.cache')
+  })
+];
+
+const cache = new Cache({
+  maxAge: 10 * 60 * 1000,
+  maxStaleness: 60 * 60 * 1000,
+  caches
+});
+```
+
+Your new cache must, at a minimum match the following spec to integrate
+properly with `out-of-band-cache`:
+
+```js
+class MyCustomCache {
+  /**
+   * Initializes the cache. This may need to set up connections, create files, or
+   * something else that is needed before any other operations occur.
+   *
+   * @returns {Promise<void>} a Promise which resolves when initialization has completed.
+   */
+  async init() { }
+
+  /**
+   * Tries to retrieve a cache item from the existing cache
+   *
+   * @param {String} key - The cache key
+   * @returns {Promise<JSONSerializable>} a Promise which resolves if an item was found
+   * @throws {Error} an error that is thrown is the item cannot be found
+   */
+  async get(key) { }
+
+  /**
+   * Stores a cache item
+   *
+   * @param {String} key - The cache key
+   * @param {JSONSerializable} value  - The JSON-serializable value to store
+   * @returns {Promise<void>} a Promise which resolves once storage completes,
+   * or fails if there is an error writing the value into the cache.
+   */
+  async set(key, value) { }
+
+  /**
+   * Clears the cache entirely
+   *
+   * @returns {Promise<void>} a Promise which resolves once all cache files are
+   * deleted or fails if there was an error.
+   */
+  async reset() { }
+}
+```
+
+If you want to ensure that your cache works properly, we have included a test
+suite that you can run directly on your cache. **NB**, you will need to have
+`mocha` and `assume` already installed to use this test.
+
+```js
+const cacheTest = require('out-of-band-cache/test/cache');
+const otherCache = require('./path/to/my/my-custom-cache');
+
+describe('MyCustomCache', function () {
+  it('is correctly consumed by out-of-band-cache', function () {
+    const options = {
+      beforeEach: function () {
+        // any setup that needs to be done before a test
+      },
+      afterEach: function () {
+        // any teardown that needs to be done after a test
+      },
+      constructor: otherCache,
+      builder: {
+        // any options that are needed to construct an otherCache via
+        // new contructor(builder)
+      }
+    }
+
+    // run the mocha suite
+    cacheTest(options)();
+  });
+})
+```
