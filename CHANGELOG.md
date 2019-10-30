@@ -1,5 +1,7 @@
 # Change Log
 
+### 1.2.2
+
 - Move `rimraf` to regular dependencies
 
 ### 1.2.1

@@ -1,6 +1,6 @@
 {
   "name": "out-of-band-cache",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "generic cache and refreshing for api clients",
   "main": "lib/index.js",
   "types": "typings/index.d.ts",
