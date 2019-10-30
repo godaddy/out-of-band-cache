@@ -35,11 +35,11 @@
     "eslint-plugin-mocha": "^6.1.0",
     "mocha": "^6.2.0",
     "nyc": "^14.1.1",
-    "rimraf": "^3.0.0",
     "sinon": "^7.4.2",
     "typescript": "^3.6.2"
   },
   "dependencies": {
-    "diagnostics": "^2.0.2"
+    "diagnostics": "^2.0.2",
+    "rimraf": "^3.0.0"
   }
 }
