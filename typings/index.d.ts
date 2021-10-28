@@ -8,50 +8,50 @@ declare module 'out-of-band-cache' {
     | { [key: string]: BaseSerializable }
     | Array<BaseSerializable>;
 
-  interface GetResult {
-    value: JSONSerializable;
+  interface GetResult<Value extends JSONSerializable> {
+    value: Value;
     fromCache: boolean;
   }
 
-  interface SharedCacheProps {
+  interface SharedCacheProps<Value extends JSONSerializable> {
     maxAge?: number;
     maxStaleness?: number;
-    shouldCache?: (resultObj: GetResult) => boolean;
+    shouldCache?: (resultObj: GetResult<Value>) => boolean;
   }
 
-  type UpdateFn = (
+  type UpdateFn<Value extends JSONSerializable> = (
     key: string,
-    staleValue: JSONSerializable
-  ) => Promise<JSONSerializable>;
+    staleValue: Value
+  ) => Promise<Value>;
 
   interface CacheType {
     init: () => MaybeAsync<void>;
-    get: (key: string) => MaybeAsync<JSONSerializable>;
-    set: (key: string, value: JSONSerializable) => MaybeAsync<void>;
+    get<Value extends JSONSerializable>(key: string): MaybeAsync<Value>;
+    set<Value extends JSONSerializable>(key: string, value: Value): MaybeAsync<void>;
     reset: () => MaybeAsync<void>;
   }
 
-  interface MultiLevelCacheProps extends SharedCacheProps {
+  interface MultiLevelCacheProps extends SharedCacheProps<any> {
     caches: CacheType[];
   }
 
-  interface MultiLevelCacheGetOpts extends SharedCacheProps {
+  interface MultiLevelCacheGetOpts<Value extends JSONSerializable> extends SharedCacheProps<Value> {
     skipCache?: boolean;
   }
 
   class MultiLevelCache {
     constructor(opts: MultiLevelCacheProps);
 
-    get(
+    get<Value extends JSONSerializable>(
       key: string,
-      opts: MultiLevelCacheGetOpts,
-      updateFn: UpdateFn
-    ): Promise<{ value: boolean; fromCache: boolean }>;
+      opts: MultiLevelCacheGetOpts<Value>,
+      updateFn: UpdateFn<Value>
+    ): Promise<GetResult<Value>>;
 
     reset(): Promise<void>;
   }
 
-  interface CacheOptions extends SharedCacheProps {
+  interface CacheOptions extends SharedCacheProps<any> {
     fsCachePath?: string;
   }
 
