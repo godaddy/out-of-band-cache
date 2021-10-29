@@ -6,6 +6,7 @@
   "types": "typings/index.d.ts",
   "scripts": {
     "test": "nyc npm run test:mocha && npm run test:types",
+    "coverage": "nyc report --reporter=lcov",
     "posttest": "npm run lint",
     "lint": "eslint-godaddy lib/*.js test/*.js example/*.js",
     "test:mocha": "mocha test/*.test.js",
