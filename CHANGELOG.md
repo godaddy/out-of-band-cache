@@ -1,5 +1,11 @@
 # Change Log
 
+### 1.2.3
+
+- [#24] Fix Typescript typings
+  - Allow generics for strongly-typed cache operations
+  - Fix get method so it can return non-boolean values
+  
 ### 1.2.2
 
 - Move `rimraf` to regular dependencies
@@ -33,3 +39,4 @@
 [#2]: https://github.com/godaddy/out-of-band-cache/pull/2
 [#4]: https://github.com/godaddy/out-of-band-cache/pull/4
 [#5]: https://github.com/godaddy/out-of-band-cache/pull/5
+[#24]: https://github.com/godaddy/out-of-band-cache/pull/24
