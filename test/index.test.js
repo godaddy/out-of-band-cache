@@ -122,6 +122,17 @@ describe('Out of Band cache', () => {
       assume(expired.value).to.equal('milk');
     });
 
+    it('refreshes on an expired item, but returns stale if infinite staleness', async function () {
+      const fridge = new Cache({ maxAge: -10, maxStaleness: Infinity }); // items are immediately stale
+
+      await fridge.get('old milk', {}, async () => 'milk');
+      await sleep(100);
+      const expired = await fridge.get('old milk', { }, async () => { throw new Error('gross'); });
+
+      assume(expired.fromCache).is.truthy();
+      assume(expired.value).to.equal('milk');
+    });
+
     it('can override the cache-level maxStaleness', async function () {
       const fridge = new Cache({ maxAge: -10, maxStaleness: -10 }); // items are immediately stale
 
