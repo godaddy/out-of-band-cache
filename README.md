@@ -23,7 +23,7 @@ You can instantiate the cache with 3 configurable options: `maxAge`,
 
 - `maxAge`: The duration, in milliseconds, before a cached item expires
 - `maxStaleness`: (Optional) The duration, in milliseconds, in which expired cache
-items are still served, defaults to 0, meaning never serve data past expiration. Can also be set to `Infinity`, meaning always give at least a cached version.
+items are still served. Defaults to 0, meaning never serve data past expiration. Can also be set to `Infinity`, meaning always give at least a cached version.
 - `fsCachePath`: (Optional) file path to create a file-system based cache
 - `shouldCache`: (Optional) a function to determine whether or not you will
 cache a found item
