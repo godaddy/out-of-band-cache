@@ -41,6 +41,6 @@
   },
   "dependencies": {
     "diagnostics": "^2.0.2",
-    "rimraf": "^3.0.2"
+    "rimraf": "^4.0.0"
   }
 }
