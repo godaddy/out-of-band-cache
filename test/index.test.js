@@ -17,9 +17,10 @@ describe('Out of Band cache', () => {
     rimraf(cachePath, done);
   });
 
-  it('exposes the memory and fs caches on the top level export', function () {
-    assume(Cache.Memory).exists();
+  it('exposes persistence caches on the top level export', function () {
     assume(Cache.File).exists();
+    assume(Cache.LRU).exists();
+    assume(Cache.Memory).exists();
   });
 
   it('does not prevent a failed request from being retried later on', async function () {
@@ -68,6 +69,21 @@ describe('Out of Band cache', () => {
 
     const withFile = new Cache({ fsCachePath: cachePath });
     assume(withFile._caches).has.length(2);
+  });
+
+  it('uses an LRU cache if maxMemoryItems is set', async function () {
+    const getter = sinon.spy();
+
+    const cache = new Cache({ maxMemoryItems: 2, fsCachePath: null });
+    await cache.get('a', {}, () => 1);
+    await cache.get('b', {}, () => 2);
+    await cache.get('c', {}, () => 3);
+
+    await cache.get('c', {}, getter);
+    assume(getter.called).is.falsy();
+
+    await cache.get('a', {}, getter);
+    assume(getter.called).is.truthy();
   });
 
   describe('get', function () {
