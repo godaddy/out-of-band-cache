@@ -24,6 +24,7 @@ You can instantiate the cache with 3 configurable options: `maxAge`,
 - `maxAge`: The duration, in milliseconds, before a cached item expires
 - `maxStaleness`: (Optional) The duration, in milliseconds, in which expired cache
 items are still served. Defaults to 0, meaning never serve data past expiration. Can also be set to `Infinity`, meaning always give at least a cached version.
+- `maxMemoryItems`: (Optional) Discards the least recently used items from memory when storing items past this maximum.
 - `fsCachePath`: (Optional) file path to create a file-system based cache
 - `shouldCache`: (Optional) a function to determine whether or not you will
 cache a found item
@@ -201,9 +202,7 @@ Your new `OtherCache` will then be used *after* the built-in caches. In the
 above case a fallback for the `memory` cache: any key not found in the `memory`
 cache will then be looked up in `OtherCache`.
 
-If you instead want to entirely replace the built-in array caches, you provide
-a `caches` array to override it. In this example, we replicate the default
-implementation by overriding with a `Memory` and `File` cache
+If you instead want to entirely replace the built-in array of caches, you can provide a `caches` array to override it. In this example, we replicate the default implementation by overriding with the `Memory` and `File` cache implementations that come with `out-of-band-cache`:
 
 ```js
 const path = require('path');
@@ -223,7 +222,17 @@ const cache = new Cache({
 });
 ```
 
-Your new cache must, at a minimum match the following spec to integrate
+### Provided Cache Methods
+
+The `out-of-band-cache` library comes with three cache implementations:
+
+- `Memory`: A simple in-memory cache that stores values in an object map
+- `File`: A file-based cache that stores values in a directory on disk. It takes a config object with a `path` property that specifies the directory to use.
+- `LRU`: An in-memory cache that stores a maximum number of items, evicting the least recently used items when the cache is full. It takes a config object with a `maxItems` property that specifies the maximum number of items to store and `maxAge`.
+
+### Authoring Custom Cache Methods
+
+A custom cache must, at a minimum, match the following spec to integrate
 properly with `out-of-band-cache`:
 
 ```js

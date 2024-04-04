@@ -1,5 +1,10 @@
 # Change Log
 
+### 1.3.0
+
+- Add an `LRU` cache implementation
+- Add a `maxMemoryItems` option to use an LRU instead of the simple in-memory cache
+
 ### 1.2.3
 
 - [#24] Fix Typescript typings
