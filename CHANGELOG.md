@@ -1,5 +1,9 @@
 # Change Log
 
+### 1.3.1
+
+- Fix incorrect typings for the `shouldCache` callback
+
 ### 1.3.0
 
 - Add an `LRU` cache implementation
