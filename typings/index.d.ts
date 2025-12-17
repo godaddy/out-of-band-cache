@@ -16,7 +16,7 @@ declare module 'out-of-band-cache' {
   interface SharedCacheProps<Value extends JSONSerializable> {
     maxAge?: number;
     maxStaleness?: number;
-    shouldCache?: (resultObj: GetResult<Value>) => boolean;
+    shouldCache?: (value: Value) => boolean;
   }
 
   type UpdateFn<Value extends JSONSerializable> = (
