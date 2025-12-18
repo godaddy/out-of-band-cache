@@ -9,6 +9,7 @@ describe('LRU cache', function () {
     try {
       // eslint-disable-next-line no-new
       new LRU();
+    // eslint-disable-next-line no-unused-vars
     } catch (err) {
       caught = true;
     }
